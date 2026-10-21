@@ -8,6 +8,7 @@ import com.uam.gestionacademica.infrastructure.web.dto.EstudianteRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,8 @@ import java.util.List;
 * 4. Llamar al caso de uso
 * 5. Transformar el resultado a DTO de respuesta
 * 6. Devolver código HTTP correcto
-* */
+* 7. Devolver código HTTP correcto
+*/
 @RestController
 @RequestMapping("/api/v1/estudiantes")
 public class EstudianteController {
@@ -32,6 +34,7 @@ public class EstudianteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstudianteResponse> create(@Valid @RequestBody EstudianteRequest request){
         Estudiante estudiante = new Estudiante(
                 null,
@@ -50,12 +53,14 @@ public class EstudianteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCENTE')")
     public ResponseEntity<EstudianteResponse> getById(@PathVariable Long id){
         Estudiante estudiante = estudianteService.getEstudianteById(id);
         return ResponseEntity.ok(toResponse(estudiante));
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','DOCENTE')")
     public ResponseEntity<List<EstudianteResponse>> getAll(){
         List<EstudianteResponse> estudiantes = estudianteService.getAllEstudiantes()
                 .stream()
@@ -66,6 +71,7 @@ public class EstudianteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstudianteResponse> update(@PathVariable Long id, @Valid @RequestBody EstudianteUpdateRequest request) {
         Estudiante estudiante = new Estudiante(
                 id,
@@ -81,6 +87,7 @@ public class EstudianteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         estudianteService.deleteEstudiante(id);
         return ResponseEntity.noContent().build();

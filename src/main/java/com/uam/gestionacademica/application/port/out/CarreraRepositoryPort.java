@@ -11,5 +11,6 @@ public interface CarreraRepositoryPort {
     List<Carrera> findAll();
     boolean existsById(Long id);
     boolean existsByCodigo(String codigo);
+    boolean existsByCodigoAndIdNot(String codigo, Long id);
     void deleteById(Long id);
 }

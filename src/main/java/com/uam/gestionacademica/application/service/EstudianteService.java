@@ -1,7 +1,9 @@
 package com.uam.gestionacademica.application.service;
 
+import com.uam.gestionacademica.application.exception.CarreraNoEncontradaException;
 import com.uam.gestionacademica.application.exception.CorreoYaRegistradoException;
 import com.uam.gestionacademica.application.exception.EstudianteNoEncontradoException;
+import com.uam.gestionacademica.application.port.out.CarreraRepositoryPort;
 import com.uam.gestionacademica.application.port.out.EstudianteRepositoryPort;
 import com.uam.gestionacademica.domain.model.Estudiante;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,12 @@ import java.util.List;
 public class EstudianteService {
 
     private final EstudianteRepositoryPort estudianteRepositoryPort;
+    private final CarreraRepositoryPort carreraRepositoryPort;
 
-    public EstudianteService(EstudianteRepositoryPort estudianteRepositoryPort){
+    public EstudianteService(EstudianteRepositoryPort estudianteRepositoryPort,
+                             CarreraRepositoryPort carreraRepositoryPort) {
         this.estudianteRepositoryPort = estudianteRepositoryPort;
+        this.carreraRepositoryPort = carreraRepositoryPort;
     }
 
     /*
@@ -25,6 +30,7 @@ public class EstudianteService {
     public Estudiante createEstudiante(Estudiante estudiante){
         estudiante.validateCanRegister();
         validateCorreoForCreate(estudiante.getCorreo());
+        validateCarreraExists(estudiante.getCarreraId());
 
         return estudianteRepositoryPort.save(estudiante);
     }
@@ -57,6 +63,8 @@ public class EstudianteService {
 
         estudianteData.validateCanRegister();
         validateCorreoForUpdate(estudianteData.getCorreo(), id);
+        validateCarreraExists(estudianteData.getCarreraId());
+
         Estudiante updatedEstudiante = new Estudiante(
                 id,
                 estudianteData.getNombre(),
@@ -95,6 +103,15 @@ public class EstudianteService {
     private void validateCorreoForUpdate(String correo, Long id){
         if(estudianteRepositoryPort.existsByCorreoAndIdNot(correo, id)){
             throw new CorreoYaRegistradoException(correo);
+        }
+    }
+
+    /*
+    * Valida que la carrera asignada exista
+    */
+    private void validateCarreraExists(Long carreraId){
+        if(carreraId == null || !carreraRepositoryPort.existsById(carreraId)){
+            throw new CarreraNoEncontradaException(carreraId);
         }
     }
 }

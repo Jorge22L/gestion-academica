@@ -55,6 +55,11 @@ public class CarreraPersistenceAdapter implements CarreraRepositoryPort {
     }
 
     @Override
+    public boolean existsByCodigoAndIdNot(String codigo, Long id) {
+        return carreraJpaRepository.existsByCodigoAndIdNot(codigo, id);
+    }
+
+    @Override
     public void deleteById(Long id) {
         carreraJpaRepository.deleteById(id);
     }

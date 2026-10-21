@@ -81,4 +81,9 @@ public class EstudiantePersistenceAdapter implements EstudianteRepositoryPort {
     public boolean existsByCorreoAndIdNot(String correo, Long id) {
         return estudianteJpaRepository.existsByCorreoAndIdNot(correo, id);
     }
+
+    @Override
+    public boolean existsByCarreraId(Long carreraId) {
+        return estudianteJpaRepository.existsByCarrera_Id(carreraId);
+    }
 }

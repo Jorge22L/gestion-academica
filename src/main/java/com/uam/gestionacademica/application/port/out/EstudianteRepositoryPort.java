@@ -13,4 +13,5 @@ public interface EstudianteRepositoryPort {
     boolean existsById(Long id);
     boolean existsByCorreo(String correo);
     boolean existsByCorreoAndIdNot(String correo, Long id);
+    boolean existsByCarreraId(Long carreraId);
 }
